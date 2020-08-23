@@ -1,0 +1,24 @@
+version: 2.1
+jobs:
+  build:
+    environment:
+      TZ: "Asia/Tokyo"
+      DEBIAN_FRONTEND: noninteractive
+    docker: 
+      - image: ubuntu:latest # the primary container, where your job's commands are run
+        environment:
+          TZ: "Asia/Tokyo"
+          DEBIAN_FRONTEND: noninteractive
+    steps:
+      - checkout # check out the code in the project directory
+      - run: apt-get update && apt-get install -y tzdata
+      - run: apt-get install -y wget sudo gnupg
+      - run: sudo apt-get update
+      - run: sudo apt-get upgrade -y
+      - run: sudo apt install -y php
+      - run: sudo apt-get install -y php-mbstring
+      - run: sudo apt-get install -y php-xml
+      - run: sudo apt-get install -y zip
+      - run: sudo apt-get install -y unzip
+      - run: echo "Set disable_coredump false" >> /etc/sudo.conf
+      - run: php ./composer install && ./vendor/bin/phpunit tests
